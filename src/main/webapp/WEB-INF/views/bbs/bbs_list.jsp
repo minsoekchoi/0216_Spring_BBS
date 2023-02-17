@@ -106,9 +106,10 @@ table tfoot ol.paging li a:hover {
 					<c:otherwise>
 						<c:forEach var="k" items="${bbs_list}" varStatus="vs">
 							<tr>
+							<!-- ?, 조건, get 방식으로 보내면 주소창으로 뜬다. b_idx = 3, where 절이라고 조건식이다, ? 는 2개가 될 수 없다.  -->
+							<!-- & 자바에서 and , 그리고라는 참조형이다 -->
 								<td>${paging.totalRecord - ( (paging.nowPage -1 ) * paging.numPerPage + vs.index)}</td>
-								<%-- <td><a href="bbs_onelist.do&b_idx=${k.b_idx}&cPage=${paging.nowPage}">${k.subject}</a></td> --%>
-								<td><a href="bbs_onelist.do?b_idx=${k.b_idx}">${k.subject}</a></td>
+								<td><a href="bbs_onelist.do?b_idx=${k.b_idx}&cPage=${paging.nowPage}">${k.subject}</a></td>
 								<td>${k.writer}</td>
 								<td>${k.write_date.substring(0,10)}</td>
 								<td>${k.hit}</td>
@@ -128,7 +129,7 @@ table tfoot ol.paging li a:hover {
 									<li class="disable">이전으로</li>
 								</c:when>
 								<c:otherwise>
-									<li><a href="${pageContext.request.contextPath}/MyController?cmd=list&cPage=${paging.beginBlock - paging.pagePerBlock}">이전으로</a></li>
+									<li><a href="bbs_list.do?cPage=${paging.beginBlock - paging.pagePerBlock}">이전으로</a></li>
 								</c:otherwise>
 							</c:choose>
 						    <!-- 블록안에 들어간 페이지번호들 -->
@@ -136,10 +137,12 @@ table tfoot ol.paging li a:hover {
 								<!-- 현재 페이지와 아닌 페이지 구분 -->
 								<c:choose>
 									<c:when test="${k == paging.nowPage}">
+										<!-- 현재페이지는 색깔만  -->
 										<li class="now">${k}</li>
 									</c:when>
 									<c:otherwise>
-										<li><a href="${pageContext.request.contextPath}/MyController?cmd=list&cPage=${k}">${k}</a></li>
+										<!-- 다른 페이지는 링크까지  -->
+										<li><a href="bbs_list.do?cPage=${k}">${k}</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -149,7 +152,7 @@ table tfoot ol.paging li a:hover {
 									<li class="disable">다음으로</li>
 								</c:when>
 								<c:otherwise>
-									<li><a href="${pageContext.request.contextPath}/MyController?cmd=list&cPage=${paging.beginBlock + paging.pagePerBlock}">다음으로</a></li>
+									<li><a href="bbs_list.do?cPage=${paging.beginBlock + paging.pagePerBlock}">다음으로</a></li>
 								</c:otherwise>
 							</c:choose>
 						</ol>

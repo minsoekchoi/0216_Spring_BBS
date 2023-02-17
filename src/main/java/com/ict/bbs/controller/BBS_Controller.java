@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +25,25 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ict.bbs.model.service.BBS_Service;
 import com.ict.bbs.model.vo.BBS_VO;
+import com.ict.bbs.model.vo.Comment_VO;
+import com.ict.common.FileReName;
+import com.ict.common.Paging;
 
 @Controller
 public class BBS_Controller {
 	@Autowired
 	private BBS_Service bbsService;
+
+	// commone 에 있는 paging 을 쓰기위함
+	@Autowired
+	private Paging paging;
+	
+	// commone 에 있는 fileReName 을 쓰기위함
+	@Autowired
+	private FileReName fileReName;
+
+	// cPage 전역변수화
+	String cPage;
 
 	private static final Logger logger = LoggerFactory.getLogger(BBS_Controller.class);
 
@@ -35,20 +51,125 @@ public class BBS_Controller {
 		this.bbsService = bbsService;
 	}
 
+	public void setPaging(Paging paging) {
+		this.paging = paging;
+	}
+	
+	public void setFileReName(FileReName fileReName) {
+		this.fileReName = fileReName;
+	}
+
 	@RequestMapping("bbs_list.do")
-	public ModelAndView getList() {
+	public ModelAndView getList(HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView("bbs/bbs_list");
-		List<BBS_VO> bbs_list = bbsService.getList();
+		// 전체 게시물의 수
+		int count = bbsService.getTotalCount();
+		paging.setTotalRecord(count);
+
+		// 전체 페이지의 수
+		// 간단한 수학, 어려워하지말자
+		if (paging.getTotalRecord() <= paging.getNumPerPage()) {
+			paging.setTotalPage(1);
+		} else {
+			paging.setTotalPage(paging.getTotalRecord() / paging.getNumPerPage());
+			if (paging.getTotalRecord() % paging.getNumPerPage() != 0) {
+				paging.setTotalPage(paging.getTotalPage() + 1);
+			}
+		}
+		// 현재 페이지
+		cPage = request.getParameter("cPage");
+		if (cPage == null) {
+			paging.setNowPage(1);
+		} else {
+			paging.setNowPage(Integer.parseInt(cPage));
+		}
+
+		// 시작 번호와 끝 번호 구하기
+		paging.setBegin((paging.getNowPage() - 1) * paging.getNumPerPage() + 1);
+		paging.setEnd((paging.getBegin() - 1) + paging.getNumPerPage());
+
+		// 시작 블록과 끝 블록 구하기
+		paging.setBeginBlock(
+				(int) ((paging.getNowPage() - 1) / paging.getPagePerBlock()) * paging.getPagePerBlock() + 1);
+		paging.setEndBlock(paging.getBeginBlock() + paging.getPagePerBlock() - 1);
+
+		// 주의 사항
+		if (paging.getEndBlock() > paging.getTotalPage()) {
+			paging.setEndBlock(paging.getTotalPage());
+		}
+
+		List<BBS_VO> bbs_list = bbsService.getList(paging.getBegin(), paging.getEnd());
 		mv.addObject("bbs_list", bbs_list);
+		mv.addObject("paging", paging);
+
+		return mv;
+	}
+	
+	@RequestMapping("bbs_list_delete_update.do")
+	public ModelAndView getListDelete(HttpServletRequest request) {
+		ModelAndView mv = new ModelAndView("bbs/bbs_list");
+		// 전체 게시물의 수
+		logger.info("list_delete 진입"+cPage);
+		int count = bbsService.getTotalCount();
+		paging.setTotalRecord(count);
+
+		// 전체 페이지의 수
+		// 간단한 수학, 어려워하지말자
+		if (paging.getTotalRecord() <= paging.getNumPerPage()) {
+			paging.setTotalPage(1);
+		} else {
+			paging.setTotalPage(paging.getTotalRecord() / paging.getNumPerPage());
+			if (paging.getTotalRecord() % paging.getNumPerPage() != 0) {
+				paging.setTotalPage(paging.getTotalPage() + 1);
+			}
+		}
+		// 현재 페이지
+		logger.info("list_delete 진입"+cPage);
+		if (cPage == null) {
+			paging.setNowPage(1);
+		} else {
+			paging.setNowPage(Integer.parseInt(cPage));
+		}
+
+		// 시작 번호와 끝 번호 구하기
+		paging.setBegin((paging.getNowPage() - 1) * paging.getNumPerPage() + 1);
+		paging.setEnd((paging.getBegin() - 1) + paging.getNumPerPage());
+
+		// 시작 블록과 끝 블록 구하기
+		paging.setBeginBlock(
+				(int) ((paging.getNowPage() - 1) / paging.getPagePerBlock()) * paging.getPagePerBlock() + 1);
+		paging.setEndBlock(paging.getBeginBlock() + paging.getPagePerBlock() - 1);
+
+		// 주의 사항
+		if (paging.getEndBlock() > paging.getTotalPage()) {
+			paging.setEndBlock(paging.getTotalPage());
+		}
+
+		List<BBS_VO> bbs_list = bbsService.getList(paging.getBegin(), paging.getEnd());
+		mv.addObject("bbs_list", bbs_list);
+		mv.addObject("paging", paging);
+
 		return mv;
 	}
 
 	@RequestMapping("bbs_onelist.do")
-	public ModelAndView getOneList(@RequestParam("b_idx") String b_idx) {
+	public ModelAndView getOneList(@RequestParam("b_idx") String b_idx, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView("bbs/bbs_onelist");
 		logger.info("onelist 진입");
+		cPage = request.getParameter("cPage");
+
+		// 조회수 업데이트
+		int res = bbsService.getHitUpdate(b_idx);
+
+		// 상세보기
 		BBS_VO bvo = bbsService.getOneList(b_idx);
+
+		// 댓글 가져오기
+		List<Comment_VO> c_list = bbsService.getCommList(b_idx);
+
 		mv.addObject("bvo", bvo);
+		mv.addObject("c_list", c_list);
+		mv.addObject("cPage", cPage);
 		return mv;
 	}
 
@@ -64,19 +185,40 @@ public class BBS_Controller {
 		logger.info("게시글 작성 페이지 진입");
 		try {
 			String path = session.getServletContext().getRealPath("/resources/upload");
-			MultipartFile f_param = bvo.getF_param()[0];
-			if (f_param.equals("") || f_param == null) {
+			MultipartFile file_name = bvo.getF_param()[0];
+			if (file_name.isEmpty()) {
 				bvo.setF_name("");
 			} else {
-				bvo.setF_name(f_param.getOriginalFilename());
+				// 이름 중복 여부
+				String str = fileReName.exec(path, bvo.getF_param()[0].getOriginalFilename());
+				bvo.setF_name(str);
+				
 			}
+			mv.addObject("cPage", "1");
 			int result = bbsService.getInsert(bvo);
 			if (result > 0) {
-				f_param.transferTo(new File(path + "/" + bvo.getF_name()));
+				file_name.transferTo(new File(path + "/" + bvo.getF_name()));
 			}
 
 		} catch (Exception e) {
 		}
+		return mv;
+	}
+
+	@RequestMapping("bbs_c_write.do")
+	public ModelAndView commWrite(Comment_VO cvo,
+			@ModelAttribute("cPage") String cPage, @ModelAttribute("b_idx") String b_idx) {
+		ModelAndView mv = new ModelAndView("redirect:bbs_onelist.do");
+		int result = bbsService.getCommWrite(cvo);
+		return mv;
+	}
+	
+	@RequestMapping("bbs_c_delete.do")
+	// model 넘겨주기 받아서 넘겨주기, request 여기서 쓰기
+	public ModelAndView commDelete(@ModelAttribute("cPage") String cPage,
+			@ModelAttribute("b_idx") String b_idx, @RequestParam("c_idx")String c_idx) {
+		ModelAndView mv = new ModelAndView("redirect:bbs_onelist.do");
+		int result = bbsService.getCommDelete(c_idx);
 		return mv;
 	}
 
@@ -120,7 +262,6 @@ public class BBS_Controller {
 			List<String> k = Arrays.asList(arr);
 			boolean res = k.contains(f_param.getOriginalFilename());
 			String ori_filename = f_param.getOriginalFilename();
-
 			if (ori_filename.equals("") || ori_filename == null) {
 				bvo.setF_name(old_f_name);
 			} else {
@@ -146,7 +287,7 @@ public class BBS_Controller {
 		mv.addObject("bvo", bvo);
 		return mv;
 	}
-	
+
 	@RequestMapping("bbs_delete_ok.do")
 	public ModelAndView getDeleteOK(@RequestParam("b_idx") String b_idx) {
 		logger.info("게시글 delete_ok 진입");

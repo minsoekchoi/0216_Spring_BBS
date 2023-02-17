@@ -9,6 +9,7 @@
 	</settings>
 	<typeAliases>
 		<typeAlias type="com.ict.bbs.model.vo.BBS_VO" alias="bbs_vo"/>
+		<typeAlias type="com.ict.bbs.model.vo.Comment_VO" alias="bbs_cvo"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="mappers/bbs-mapper.xml" />

@@ -42,7 +42,7 @@
 </style>
 <script type="text/javascript">
 	function list_go(f) {
-		f.action = "bbs_list.do";
+		f.action = "bbs_list_delete_update.do";
 		f.submit();
 	}
 	function update_ok_go(f) {
