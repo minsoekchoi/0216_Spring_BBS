@@ -59,13 +59,18 @@ public class BBS_DAO {
 	public List<Comment_VO> getCommList(String b_idx) {
 		return sqlSessionTemplate.selectList("bbs.comm_list", b_idx);
 	}
-	
+
 	public int getCommWrite(Comment_VO cvo) {
 		return sqlSessionTemplate.insert("bbs.comm_insert", cvo);
 	}
-	
+
 	public int getCommDelete(String c_idx) {
 		return sqlSessionTemplate.delete("bbs.comm_delete", c_idx);
 	}
-	
+
+	//
+	public Comment_VO getCommOneList(String c_idx) {
+		return sqlSessionTemplate.selectOne("bbs.comm_onelist", c_idx);
+	}
+
 }

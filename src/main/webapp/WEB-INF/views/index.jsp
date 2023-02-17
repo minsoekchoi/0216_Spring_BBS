@@ -8,7 +8,8 @@
 </head>
 <body>
 	<h3>
-		<a href="bbs_list.do">BBS</a>
+		<li><a href="bbs_list.do">BBS</a></li>
+		<li><a href="board_list.do">BOARD</a></li>
 	</h3>
 </body>
 </html>

@@ -33,7 +33,7 @@ public class BBS_ServiceImpl implements BBS_Service {
 	public int getHitUpdate(String b_idx) {
 		return bbsDAO.getHitUpdate(b_idx);
 	}
-	
+
 	@Override
 	public int getTotalCount() {
 		return bbsDAO.getTotalCount();
@@ -48,7 +48,7 @@ public class BBS_ServiceImpl implements BBS_Service {
 	public List<Comment_VO> getCommList(String b_idx) {
 		return bbsDAO.getCommList(b_idx);
 	}
-	
+
 	@Override
 	public int getInsert(BBS_VO bvo) {
 		return bbsDAO.getInsert(bvo);
@@ -63,14 +63,20 @@ public class BBS_ServiceImpl implements BBS_Service {
 	public int getUpdate(BBS_VO bvo) {
 		return bbsDAO.getUpdate(bvo);
 	}
-	
+
 	@Override
 	public int getCommWrite(Comment_VO cvo) {
 		return bbsDAO.getCommWrite(cvo);
 	}
-	
+
 	@Override
 	public int getCommDelete(String c_idx) {
 		return bbsDAO.getCommDelete(c_idx);
 	}
+
+	@Override
+	public Comment_VO getCommOneList(String c_idx) {
+		return bbsDAO.getCommOneList(c_idx);
+	}
+
 }

@@ -62,6 +62,7 @@
 		f.action = "bbs_c_write.do";
 		f.submit();
 	}
+	// 댓글 삭제 시 비밀번호 치게 해보자
 	function comment_del(f) {
 		f.action = "bbs_c_delete.do";
 		f.submit();
