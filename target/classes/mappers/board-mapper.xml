@@ -3,7 +3,67 @@
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="board">
-	<select id="list" resultType="board_vo">
-		select * from board order by idx
+
+	<!-- 게시물 갯수 세기 -->
+	<select resultType="int" id="count">
+		select count(*) from board
 	</select>
+
+	<!-- 원글 리스트 -->
+	<!-- 중요!!!!! -->
+	<select id="list" parameterType="Map" resultType="board_vo">
+		select * from(
+		select rownum r_num, a.* from (
+		select * from board order by groups desc, lev asc) a
+		) where r_num
+		between #{begin} and #{end}
+	</select>
+
+	<!-- 원글 삽입 -->
+	<insert id="insert" parameterType="board_vo">
+		insert into board(idx, writer,
+		title, content, pwd, hit, groups, step, lev, regdate, f_name)
+		values(board_seq.nextval, #{writer}, #{title}, #{content}, #{pwd}, 0,
+		group_seq.nextval, 0, 0, sysdate, #{f_name})
+	</insert>
+
+	<!-- 조회수 업데이트 -->
+	<update id="hitup" parameterType="String">
+		update board set hit = hit+1
+		where idx = #{idx}
+	</update>
+
+	<!-- 원글 보기 -->
+	<select resultType="board_vo" id="onelist" parameterType="String">
+		select * from board where idx = #{idx}
+	</select>
+	
+	<!-- 댓글 LevelUP 하기  -->
+	<update id="levup" parameterType="Map">
+		update board set lev=lev+1 where groups=#{groups} and lev >= #{lev}
+	</update>
+	
+	<!-- ans_insert하기 -->
+	<insert id="ans_insert" parameterType="board_vo">
+		insert into board(idx, writer,
+		title, content, pwd, hit, groups, step, lev, regdate, f_name)
+		values(board_seq.nextval, #{writer}, #{title}, #{content}, #{pwd}, 0,
+		#{groups}, #{step}, #{lev}, sysdate, #{f_name})
+	</insert>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="delete" parameterType="String">
+		delete from board where idx = #{idx}
+	</delete>
+	
+
+	<!-- 연습 다음 lev 구하기 -->
+	<select id="after_lev" parameterType="board_vo" resultType="int" >
+		select after_lev
+		from(
+		select lev, LEAD(lev) over(order by lev) after_lev from 
+		(select lev from board where groups = #{groups} and step = #{step} order by lev))
+		where lev = #{lev}
+	</select>
+
 </mapper>

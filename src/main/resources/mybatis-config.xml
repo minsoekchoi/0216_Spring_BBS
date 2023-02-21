@@ -10,12 +10,15 @@
 	<typeAliases>
 		<typeAlias type="com.ict.bbs.model.vo.BBS_VO" alias="bbs_vo"/>
 		<typeAlias type="com.ict.bbs.model.vo.Comment_VO" alias="bbs_cvo"/>
-		<!-- <typeAlias type="com.ict.board.model.vo.Board_VO" alias="board_vo"/> -->
+		<typeAlias type="com.ict.board.model.vo.Board_VO" alias="board_vo"/>
+		<typeAlias type="com.ict.shop.model.vo.Shop_VO" alias="shop_vo"/>
 	</typeAliases>
 	<mappers>
 		<!-- bbs  -->
 		<mapper resource="mappers/bbs-mapper.xml" />
 		<!-- board  -->
-		<!-- <mapper resource="mappers/board-mapper.xml" /> -->
+		<mapper resource="mappers/board-mapper.xml" />
+		<!-- shop  -->
+		<mapper resource="mappers/shop-mapper.xml" />
 	</mappers>
 </configuration>

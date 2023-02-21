@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop">
+	<!--  -->
+	<select id="list" parameterType="String" resultType="shop_vo">
+		select * from shop_t where category = #{category}
+	</select>
+
+	<!--  -->
+	<select id="onelist" parameterType="String" resultType="shop_vo">
+		select * from shop_t where idx = #{idx}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- ******************************************************************  -->
+	<!-- 회원가입 -->
+	<insert id="register" parameterType="shop_vo">
+		insert into members(m_idx, m_id, m_pw, m_name, m_reg, m_addr)
+		values(members_seq.nextval, #{m_id}, #{m_pw}, #{m_name}, sysdate, #{m_addr})
+	</insert>
+	
+	<!-- 로그인 시 비밀번호 일치 여부  -->
+	<select id="memberpwchk" parameterType="String" resultType="shop_vo">
+			select * from members where m_id = #{m_id}
+	</select>
+	
+	<!-- 상품 등록 -->
+	<insert id="productinsert">
+		insert into shop_t(idx, category, p_num, p_name, p_company, p_price, p_saleprice, p_image_s, p_image_l, p_content, p_date)
+		values(SHOP_SEQ.nextval, #{category}, #{p_num}, #{p_name}, #{p_company}, #{p_price}, #{p_saleprice}, #{p_image_s}, #{p_image_l}, #{p_content}, sysdate)
+	</insert>
+	
+
+
+</mapper>

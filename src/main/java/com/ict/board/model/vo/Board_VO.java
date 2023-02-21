@@ -1,7 +1,29 @@
 package com.ict.board.model.vo;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class Board_VO {
+
+	private MultipartFile f_param;
 	private String idx, writer, title, content, pwd, hit, groups, step, lev, regdate, f_name;
+
+	private String after_lev;
+
+	public String getAfter_lev() {
+		return after_lev;
+	}
+
+	public void setAfter_lev(String after_lev) {
+		this.after_lev = after_lev;
+	}
+
+	public MultipartFile getF_param() {
+		return f_param;
+	}
+
+	public void setF_param(MultipartFile f_param) {
+		this.f_param = f_param;
+	}
 
 	public String getIdx() {
 		return idx;
