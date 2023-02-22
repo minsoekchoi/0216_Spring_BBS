@@ -40,4 +40,8 @@ public class Shop_DAO {
 	public int getProductInsert(Shop_VO shop_VO) {
 		return sqlSessionTemplate.insert("shop.productinsert", shop_VO);
 	}
+	
+	public int getMyStoreSaveInsert(List<Shop_VO> clist) {
+		return sqlSessionTemplate.insert("shop.mystoreinsert", clist);
+	}
 }

@@ -44,4 +44,9 @@ public class Shop_ServiceImpl implements Shop_Service {
 	public int getProductInsert(Shop_VO shop_VO) {
 		return shop_DAO.getProductInsert(shop_VO);
 	}
+	
+	@Override
+	public int getMyStoreSaveInsert(List<Shop_VO> clist) {
+		return shop_DAO.getMyStoreSaveInsert(clist);
+	}
 }

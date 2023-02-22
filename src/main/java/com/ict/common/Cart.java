@@ -47,7 +47,7 @@ public class Cart {
 	}
 
 	// 제품을 카트에 담는 메서드
-	public void addProduct(String idx) {
+	public void addProduct(String idx, String m_id) {
 		Shop_VO shop_VO = findProduct(idx);
 		if (shop_VO != null) {
 			// 카트에 있는 현재 개수를 증가
@@ -57,6 +57,7 @@ public class Cart {
 		} else {
 			Shop_VO shop_VO2 = shop_DAO.getShopOneList(idx);
 			shop_VO2.setQaunt(1);
+			shop_VO2.setM_id(m_id);
 			total = total + shop_VO2.getP_saleprice();
 			cartlist.add(shop_VO2);
 		}

@@ -22,10 +22,10 @@ table, th, td {
 </style>
 <script type="text/javascript">
 	function add_cart() {
-		location.href = "shop_addcart.do?idx=${shop_VO.idx}";
+		location.href = "shop_addcart.do?idx=${shop_VO.idx}&m_id=${m_id}";
 	}
 	function show_cart() {
-		location.href = "shop_showcart.do";
+		location.href = "shop_showcart.do?m_id=${m_id}";
 	}
 </script>
 </head>
@@ -59,12 +59,13 @@ table, th, td {
 		</tr>
 		<tr>
 			<td colspan="2" align="center">
-			<img src="resources/images/${shop_VO.p_image_l}"">
+			<img src="resources/images/${shop_VO.p_image_l}">
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="center">
 				<button onclick="add_cart()"> 장바구니 담기 </button>
+				
 				<button onclick="show_cart()"> 장바구니 보기 </button>
 			</td>
 		</tr>

@@ -24,7 +24,9 @@ table, th, td {
 </style>
 </head>
 <body>
+	<!-- source를 가져오는데 -->
 	<jsp:include page="top.jsp" />
+	<!-- 이건 결과값만  -->
 	<%-- <%@ include file="top.jsp" %> --%>
 	<table>
 		<thead>
@@ -48,8 +50,8 @@ table, th, td {
 						<tr>
 							<td>${k.p_num }</td>
 							<%-- <td><img src="resources/images/${k.p_image_s}" width="100px"></td> --%>
-							<td><img src="resources/upload/${k.p_image_s}" width="100px"></td>
-							<td><a href="shop_onelist.do?idx=${k.idx}">${k.p_name}</a></td>
+							<td><img src="resources/images/${k.p_image_s}" width="100px"></td>
+							<td><a href="shop_onelist.do?idx=${k.idx}&m_id=${m_id}">${k.p_name}</a></td>
 							<td>할인가 : <fmt:formatNumber value="${k.p_saleprice}" pattern="#,##0" />원<br> <font color="red">(${k.getPercent()}%)</font></td>
 							<td>시중 가격 : <fmt:formatNumber value="${k.p_price}" pattern="#,##0" />원</td>
 						</tr>

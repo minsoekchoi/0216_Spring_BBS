@@ -24,4 +24,7 @@ public interface Shop_Service {
 	
 	// 상품 등록
 	public int getProductInsert(Shop_VO shop_VO);
+	
+	// 로그아웃 시 장바구니에 있는 상품 list DB에 저장
+	public int getMyStoreSaveInsert(List<Shop_VO> clist);
 }
